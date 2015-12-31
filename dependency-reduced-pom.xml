@@ -20,7 +20,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.MyApp.FaceBookData.App</mainClass>
+                  <mainClass>com.MyApp.FaceBookData.University_redirectId</mainClass>
                 </transformer>
               </transformers>
             </configuration>

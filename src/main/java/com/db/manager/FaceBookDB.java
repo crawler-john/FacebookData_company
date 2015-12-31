@@ -19,11 +19,35 @@ public class FaceBookDB {
 	private static final String POOLNAME = "proxool.FaceBook";
 
 	// 查询未获得schoolname_facebook的学校
-	public List<String> getEmptySchoolNameList() {
+	public List<String> getEmptySchoolNameList(String id) {
 		DBServer dbServer = new DBServer(POOLNAME);
 		List<String> list = new ArrayList<String>();
 		try {
-			String sql = "SELECT schoolName from t_company where id > 6061";
+			String sql = "SELECT schoolName from t_company where id > "+id;
+
+			ResultSet rs = dbServer.select(sql);
+			while (rs.next()) {
+				list.add(rs.getString("schoolName"));
+			}
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			dbServer.close();
+
+		}
+		return list;
+
+	}
+	/**
+	 *获取查询一遍还没有查询到的数据
+	 */
+	public List<String> getEmptySchoolNameList1(String id) {
+		DBServer dbServer = new DBServer(POOLNAME);
+		List<String> list = new ArrayList<String>();
+		try {
+			String sql = "SELECT schoolName from t_company where schoolName_FaceBook is null and id > '"+id+"'";
+
 			ResultSet rs = dbServer.select(sql);
 			while (rs.next()) {
 				list.add(rs.getString("schoolName"));
@@ -499,20 +523,124 @@ public class FaceBookDB {
 			dbServer.close();
 		}
 	}
-
-	public static void main(String[] args) {
+	
+	
+	
+	public List<String> getRedirectNameList(String name){
 		FaceBookDB db = new FaceBookDB();
-		System.out.println(db.randomGetSchoolID());
-		System.out.println((null == db.randomGetSchoolID()));
-		String accessToken = "CAATvgqd5bWoBAAaZC1SBopDBg1YZB88DNO89GXv1bAguGGVA6aZCAZCi6ZAi2VZBE7UpBIqu4wJWZAMu9dhiznHKT1MMkE0U9ob4veZCrq45gjD6hFSk8G7Wxu139tkpanZCHcOgc6Wt2VBESdUunyXFUNDhrPLLQRXoZASHzwrs5Fq5kZCgbUojbCEElCToaEnBZCwZD";
-		universityInfo universityInfo = new universityInfo(
-				"https://graph.facebook.com/v2.5/"
-						+ "19479053136"
-						+ "?fields=id,name,about,can_post,category_list,cover,description,emails,founded,general_info,global_brand_page_name,is_always_open,is_community_page,is_published,is_verified,link,location,phone,talking_about_count,username,website,were_here_count,albums,checkins,feed,likes,milestones,photos,videos&access_token="
-						+ accessToken);
-		db.updateUniversityData(universityInfo.analyzer());
-		System.out.println(111);
+		List<String > list = db.getRedirectList(db.selectRdFromList(db.selectPageId(name)));
+		
+		return list;
+	}
+	
+	
+	
+	
+	//获取其在page表中的位置
+	private String selectPageId(String Name) {
+		DBServer dbServer = new DBServer(POOLNAME);
+		String result = "";
+		try {
+			String sql = "SELECT page_id from page where page_title='"+Name+"'";
+			ResultSet rs = dbServer.select(sql);
+			while (rs.next()) {
+				result= result+rs.getString("page_id")+",";
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			dbServer.close();
+		}
+		result=result.substring(0, result.length()-1);
+		return  result;
+	}
+	//获取其在page表中重定向的名字的列表
+	private String selectRdFromList(String rd_to) {
+		if(rd_to == null && rd_to == ""){
+			System.out.println("rd_to 为空");
+			return null;
+		}
+		DBServer dbServer = new DBServer(POOLNAME);
+		String result="";
+		String sql = "";
+		try {
+			if(rd_to.contains(",")){
+				sql = "SELECT rd_from from redirect where rd_to in ("+rd_to +")";
+			}else {
+				sql = "SELECT rd_from from redirect where rd_to = "+rd_to;
+			}
+
+			ResultSet rs = dbServer.select(sql);
+			while (rs.next()) {
+				result=result + rs.getString("rd_from")+",";
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			dbServer.close();
+		}
+		result=result.substring(0, result.length()-1);
+		return result;
+	}
+	
+	
+	private List<String> getRedirectList(String rd_from) {
+		
+		DBServer dbServer = new DBServer(POOLNAME);
+		List<String> list = new ArrayList<String>();
+		String sql = "";
+		if(rd_from==null&& rd_from ==""){
+			System.out.println("rd_from 为空");
+			return list;
+		}
+		try {
+			if(rd_from.contains(",")){
+				sql = "SELECT page_title from page where page_id IN ("+rd_from+")";
+			}else {
+				sql = "SELECT page_title from page where page_id = "+rd_from;
+	
+			}
+			ResultSet rs = dbServer.select(sql);
+			while (rs.next()) {
+				list.add(rs.getString("page_title"));
+			}
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			dbServer.close();
+
+		}
+		return list;
 
 	}
+	
+	
+	
 
+//	public static void main(String[] args) {
+//		FaceBookDB db = new FaceBookDB();
+//		System.out.println(db.randomGetSchoolID());
+//		System.out.println((null == db.randomGetSchoolID()));
+//		String accessToken = "CAATvgqd5bWoBAAaZC1SBopDBg1YZB88DNO89GXv1bAguGGVA6aZCAZCi6ZAi2VZBE7UpBIqu4wJWZAMu9dhiznHKT1MMkE0U9ob4veZCrq45gjD6hFSk8G7Wxu139tkpanZCHcOgc6Wt2VBESdUunyXFUNDhrPLLQRXoZASHzwrs5Fq5kZCgbUojbCEElCToaEnBZCwZD";
+//		universityInfo universityInfo = new universityInfo(
+//				"https://graph.facebook.com/v2.5/"
+//						+ "301554773252565"
+//						+ "?fields=id,name,about,can_post,category_list,cover,description,emails,founded,general_info,global_brand_page_name,is_always_open,is_community_page,is_published,is_verified,link,location,phone,talking_about_count,username,website,were_here_count,albums,checkins,feed,likes,milestones,photos,videos&access_token="
+//						+ accessToken);
+//		db.updateUniversityData(universityInfo.analyzer());
+//		System.out.println(111);
+//
+//	}
+
+	
+	public static void main(String[] args) {
+		FaceBookDB db = new FaceBookDB();
+		List<String > list = db.getRedirectNameList("BBC");
+		
+		
+	}
+	
 }

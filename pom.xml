@@ -30,7 +30,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.MyApp.FaceBookData.App</mainClass>
+									<mainClass>com.MyApp.FaceBookData.University_redirectId</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

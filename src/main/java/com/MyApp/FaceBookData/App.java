@@ -12,9 +12,11 @@ public class App
     {
 		FaceBookDB db = new FaceBookDB();
 		//String accessToken = "CAACEdEose0cBAGCAuWE20jZA12D3wqpMXEGDjZAkT4YsZBITO17i3v9HGsouUIuuq1JOCJttkNg1ViEHcYibiGkCO5EqfkV2Xmeg2DjI5TxVZBDKdU9hSpwS8DVcQcyZBJwBhkZAEANwEBHvkwnRgy0RHveSlXt7hmxRzy00YQPPdupAX4B7Wm5OiaOkPSD0Cnqm2Gzo4gLGRwgdHEIRwt";
-		String accessToken = args[0];
-		while(null != db.randomGetSchoolID()){
+		String accessToken = "CAATvgqd5bWoBAAaZC1SBopDBg1YZB88DNO89GXv1bAguGGVA6aZCAZCi6ZAi2VZBE7UpBIqu4wJWZAMu9dhiznHKT1MMkE0U9ob4veZCrq45gjD6hFSk8G7Wxu139tkpanZCHcOgc6Wt2VBESdUunyXFUNDhrPLLQRXoZASHzwrs5Fq5kZCgbUojbCEElCToaEnBZCwZD";
+		String str;
+		while(null !=( str= db.randomGetSchoolID())){
 			try {
+				System.out.println(str);
 				//通过url读取JSON数据
 				universityInfo universityInfo = new universityInfo(
 						"https://graph.facebook.com/v2.5/"

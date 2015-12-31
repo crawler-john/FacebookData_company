@@ -45,10 +45,13 @@ public class universityId  extends CrawlBase {
 		
 		
 		public static void main(String[] args) {
+			String id =args[0];
 			FaceBookDB db = new FaceBookDB();
-			List<String> emptySchoolName = db.getEmptySchoolNameList();
+			List<String> emptySchoolName = db.getEmptySchoolNameList(id);
 			System.out.println(111);
-			for(String s:emptySchoolName){
+			int i = 0;
+			for(String s:emptySchoolName){ 
+				i++;
 				try {
 					String schoolName =s.replaceAll(" ", "%20");
 					
@@ -58,6 +61,9 @@ public class universityId  extends CrawlBase {
 					System.out.println(universityInfo.getSchoolID()+"  "+universityInfo.getSchoolName());
 					if(universityInfo.getSchoolName().trim().equals(s))
 					db.updateSchoolId(s, universityInfo.getSchoolName(), universityInfo.getSchoolID());
+					if(i%800==0){
+						Thread.sleep(1000*60*5);
+					}
 
 				} catch (Exception e) {
 					// TODO: handle exception
@@ -65,12 +71,7 @@ public class universityId  extends CrawlBase {
 				}
 				
 			}
-//			System.out.println("https://graph.facebook.com/v2.5/search?q=Eastern%20Mennonite%20University&type=place&access_token="+accessToken);
-//			universityId universityInfo = new universityId("https://graph.facebook.com/v2.5/search?q=Eastern%20Mennonite%20University&type=place&access_token="+accessToken);
-//			System.out.println(1111);
-//			
-//			System.out.println(universityInfo.getSchoolID()+"  "+universityInfo.getSchoolName());
-			
+//
 			
 		
 		}

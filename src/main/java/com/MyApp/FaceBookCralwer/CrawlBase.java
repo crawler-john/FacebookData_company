@@ -132,7 +132,7 @@ public abstract class CrawlBase {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				
 				logger.error(urlStr + " can't connect "
 						+ (MaxConnectTimes - n + 1));
 				n--;
